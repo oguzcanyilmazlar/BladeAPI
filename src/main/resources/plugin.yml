@@ -1,0 +1,7 @@
+name: PrivateBreak
+version: '${project.version}'
+main: me.acablade.packets.PacketPlugin
+author: Acablade
+depend:
+  - ProtocolLib
+description: Disables the arm swinging animation the player does when they are breaking a block
