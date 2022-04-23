@@ -34,10 +34,11 @@ public abstract class AbstractGame {
     private final GameData gameData = new GameData();
 
     public void onEnable(){
-        endPhase();
+
     }
 
-    private void endPhase(){
+    public void endPhase(){
+        if(isFrozen()) return;
         try {
             if(this.currentPhase!=null)this.currentPhase.disable();
             if(currentPhaseIndex>=phaseLinkedList.size()) {
@@ -57,6 +58,7 @@ public abstract class AbstractGame {
     public final void enable(long delay, long tick){
         if(taskNumber>0) return;
         onEnable();
+        endPhase();
         taskNumber = (new BukkitRunnable(){
             @Override
             public void run() {
@@ -73,7 +75,7 @@ public abstract class AbstractGame {
         this.phaseLinkedList.remove(currentPhaseIndex+1);
     }
 
-    public void addPhaseLast(Class<? extends AbstractPhase> clazz){
+    public void addPhase(Class<? extends AbstractPhase> clazz){
         this.phaseLinkedList.addLast(clazz);
     }
 
@@ -91,7 +93,7 @@ public abstract class AbstractGame {
     }
 
     public void tick(){
-        getCurrentPhase().tick();
+        if(getCurrentPhase()!=null)getCurrentPhase().tick();
         if(!frozen&&getCurrentPhase().timeLeft().isZero()) endPhase();
     }
 

@@ -22,16 +22,12 @@ import java.util.stream.Collectors;
 @Getter
 public class TeamFeature extends AbstractFeature {
 
-    private final Set<Team> teamSet = new HashSet<>();
+    private Set<Team> teamSet = new HashSet<>();
+    private final TeamFeatureSupplier teamFeatureSupplier;
+    private static final TeamFeatureSupplier DEFAULT_TEAM_SUPPLIER = () -> {
 
-    public TeamFeature(AbstractPhase abstractPhase) {
-        super(abstractPhase);
-    }
+        Set<Team> teamSet = new HashSet<>();
 
-
-
-    @Override
-    public void onEnable(){
         List<ChatColor> colorList = new ArrayList<>();
 
         colorList.add(ChatColor.BLUE);
@@ -46,6 +42,26 @@ public class TeamFeature extends AbstractFeature {
         for (int i = 0; i < colorList.size(); i++) {
             teamSet.add(new Team(nameList.get(i), colorList.get(i), 2));
         }
+
+        return teamSet;
+    };
+
+    public TeamFeature(AbstractPhase abstractPhase) {
+        super(abstractPhase);
+        this.teamFeatureSupplier = DEFAULT_TEAM_SUPPLIER;
+    }
+
+    public TeamFeature(AbstractPhase phase, TeamFeatureSupplier supplier){
+        super(phase);
+        this.teamFeatureSupplier = supplier;
+    }
+
+
+
+    @Override
+    public void onEnable(){
+
+        teamSet = teamFeatureSupplier.supplyTeams();
 
         Set<Player> playerSet = getAbstractPhase().getGame().getGameData().getPlayerList().stream().map(Bukkit::getPlayer).collect(Collectors.toSet());
 
@@ -71,8 +87,6 @@ public class TeamFeature extends AbstractFeature {
         GamePlayer victimGamePlayer = GamePlayer.getGamePlayer(victim.getUniqueId());
 
         event.setCancelled(damagerGamePlayer.getTeam()==victimGamePlayer.getTeam());
-
-        // 👍
 
     }
 

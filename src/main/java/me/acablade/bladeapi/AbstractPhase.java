@@ -39,12 +39,8 @@ public abstract class AbstractPhase {
         // empty for now
     }
 
-    public void addFeature(Class<? extends AbstractFeature> clazz){
-        try {
-            featureMap.put(clazz, clazz.getDeclaredConstructor(AbstractPhase.class).newInstance(this));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+    public void addFeature(AbstractFeature feature){
+        featureMap.put(feature.getClass(), feature);
     }
 
     public final void enable(){
@@ -66,10 +62,9 @@ public abstract class AbstractPhase {
         return remaining.isNegative() ? Duration.ZERO : remaining;
     }
 
-    public AbstractFeature getFeature(Class<? extends AbstractFeature> clazz){
-        return featureMap.get(clazz);
+    public <T extends AbstractFeature> T getFeature(Class<T> clazz){
+        return (T) featureMap.get(clazz);
     }
-
 
 
 }
