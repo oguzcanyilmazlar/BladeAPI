@@ -127,7 +127,7 @@ public abstract class AbstractGame {
      */
     protected final void tick(){
         if(getCurrentPhase()!=null)getCurrentPhase().tick();
-        if(!frozen&&getCurrentPhase().timeLeft().isZero()) endPhase();
+        if(!frozen&&(getCurrentPhase()!=null&&getCurrentPhase().timeLeft().isZero())) endPhase();
         onTick();
     }
 
