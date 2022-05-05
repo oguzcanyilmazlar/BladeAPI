@@ -8,9 +8,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 /**
  * @author Acablade/oz
  */
-public class AntiBlockPlaceFeature extends AbstractFeature {
+public class NoBlockPlaceFeature extends AbstractFeature {
 
-    public AntiBlockPlaceFeature(AbstractPhase abstractPhase) {
+    public NoBlockPlaceFeature(AbstractPhase abstractPhase) {
         super(abstractPhase);
     }
 

@@ -8,7 +8,7 @@ import java.util.Set;
  * @author Acablade/oz
  */
 
-public interface TeamFeatureSupplier {
+public interface TeamFeatureSupplier<T> {
 
     public Set<Team> supplyTeams();
 

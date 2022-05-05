@@ -2,18 +2,21 @@ package me.acablade.bladeapi.events;
 
 import me.acablade.bladeapi.AbstractGame;
 import me.acablade.bladeapi.AbstractPhase;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 /**
  * @author Acablade/oz
  */
-public class GameStateChangeEvent extends GameEvent{
+public class GamePhaseChangeEvent extends GameEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
     private final AbstractPhase prevPhase;
     private final AbstractPhase nextPhase;
 
-    public GameStateChangeEvent(AbstractGame game, AbstractPhase prevPhase, AbstractPhase nextPhase) {
+    private boolean cancelled;
+
+    public GamePhaseChangeEvent(AbstractGame game, AbstractPhase prevPhase, AbstractPhase nextPhase) {
         super(game);
         this.prevPhase = prevPhase;
         this.nextPhase = nextPhase;
@@ -34,5 +37,15 @@ public class GameStateChangeEvent extends GameEvent{
 
     public AbstractPhase getPrevPhase() {
         return prevPhase;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
     }
 }

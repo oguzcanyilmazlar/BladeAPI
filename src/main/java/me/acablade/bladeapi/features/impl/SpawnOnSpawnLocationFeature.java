@@ -25,11 +25,11 @@ public class SpawnOnSpawnLocationFeature extends AbstractFeature {
         super.onEnable();
 
         if(getAbstractPhase().getFeature(MapFeature.class)==null){
-            onDisable();
+            disable();
             return;
         }
 
-        mapFeature = (MapFeature) getAbstractPhase().getFeature(MapFeature.class);
+        mapFeature = getAbstractPhase().getFeature(MapFeature.class);
 
     }
 

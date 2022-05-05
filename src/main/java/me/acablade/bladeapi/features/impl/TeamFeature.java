@@ -2,9 +2,12 @@ package me.acablade.bladeapi.features.impl;
 
 import lombok.Getter;
 import me.acablade.bladeapi.AbstractPhase;
+import me.acablade.bladeapi.events.TeamChooseEvent;
 import me.acablade.bladeapi.features.AbstractFeature;
 import me.acablade.bladeapi.objects.GamePlayer;
 import me.acablade.bladeapi.objects.Team;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -13,6 +16,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -23,9 +28,11 @@ import java.util.stream.Collectors;
 public class TeamFeature extends AbstractFeature {
 
     private Set<Team> teamSet = new HashSet<>();
-    private final TeamFeatureSupplier teamFeatureSupplier;
-    private static final TeamFeatureSupplier DEFAULT_TEAM_SUPPLIER = () -> {
+    private final boolean friendlyFire;
 
+    private final TeamFeatureSupplier teamFeatureSupplier;
+
+    private static final TeamFeatureSupplier DEFAULT_TEAM_SUPPLIER = () -> {
         Set<Team> teamSet = new HashSet<>();
 
         List<ChatColor> colorList = new ArrayList<>();
@@ -47,13 +54,17 @@ public class TeamFeature extends AbstractFeature {
     };
 
     public TeamFeature(AbstractPhase abstractPhase) {
-        super(abstractPhase);
-        this.teamFeatureSupplier = DEFAULT_TEAM_SUPPLIER;
+        this(abstractPhase,DEFAULT_TEAM_SUPPLIER);
     }
 
     public TeamFeature(AbstractPhase phase, TeamFeatureSupplier supplier){
+        this(phase,supplier,false);
+    }
+
+    public TeamFeature(AbstractPhase phase, TeamFeatureSupplier supplier, boolean friendlyFire){
         super(phase);
         this.teamFeatureSupplier = supplier;
+        this.friendlyFire = friendlyFire;
     }
 
 
@@ -67,10 +78,13 @@ public class TeamFeature extends AbstractFeature {
 
         Map<String, Integer> sizeMap = calcSizes();
 
+
         for(Player player: playerSet){
             Team team = getTeam(getSmallestTeam(sizeMap)).orElseThrow(() -> new RuntimeException("Takım bulunamadı!"));
+            TeamChooseEvent event = new TeamChooseEvent(player, getAbstractPhase().getGame(), team);
+            Bukkit.getPluginManager().callEvent(event);
+            if(event.isCancelled()) continue;
             team.getPlayerList().add(player.getUniqueId());
-            player.sendMessage("§eOtomatik olarak " + team.getColor() + team.getName() + " §etakımına atandın!");
         }
 
 
@@ -78,6 +92,8 @@ public class TeamFeature extends AbstractFeature {
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event){
+        if(isFriendlyFire()) return;
+
         Entity damager = event.getDamager();
         Entity victim = event.getEntity();
 

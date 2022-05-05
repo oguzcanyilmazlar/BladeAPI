@@ -17,9 +17,9 @@ import java.util.Map;
  */
 
 @RequiredArgsConstructor
-@Getter
 public abstract class AbstractPhase {
 
+    @Getter
     private final AbstractGame game;
     private final Instant startInstant = Instant.now();
 
@@ -27,17 +27,11 @@ public abstract class AbstractPhase {
 
     public abstract Duration duration();
 
-    public void onEnable(){
-        featureMap.values().forEach(AbstractFeature::onEnable);
-    }
+    public void onEnable(){}
 
-    public void onDisable(){
-        featureMap.values().forEach(AbstractFeature::onDisable);
-    }
+    public void onDisable(){}
 
-    public void onTick(){
-        // empty for now
-    }
+    public void onTick(){}
 
     public void addFeature(AbstractFeature feature){
         featureMap.put(feature.getClass(), feature);
@@ -45,10 +39,12 @@ public abstract class AbstractPhase {
 
     public final void enable(){
         onEnable();
+        featureMap.values().forEach(AbstractFeature::enable);
     }
 
     public final void disable(){
         onDisable();
+        featureMap.values().forEach(AbstractFeature::disable);
     }
 
     public final void tick(){

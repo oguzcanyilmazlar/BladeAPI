@@ -18,11 +18,20 @@ public abstract class AbstractFeature implements Listener {
     private final AbstractPhase abstractPhase;
 
     public void onEnable(){
-        Bukkit.getPluginManager().registerEvents(this,abstractPhase.getGame().getPlugin());
+
     }
     public void onDisable(){
-        HandlerList.unregisterAll(this);
+
     }
     public void onTick(){}
+
+    public final void enable(){
+        Bukkit.getPluginManager().registerEvents(this,abstractPhase.getGame().getPlugin());
+        this.onEnable();
+    }
+    public final void disable(){
+        HandlerList.unregisterAll(this);
+        this.onDisable();
+    }
 
 }

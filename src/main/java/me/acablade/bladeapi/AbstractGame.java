@@ -3,6 +3,7 @@ package me.acablade.bladeapi;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.acablade.bladeapi.events.GamePhaseChangeEvent;
 import me.acablade.bladeapi.objects.GameData;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,10 +17,9 @@ import java.util.LinkedList;
  */
 
 @RequiredArgsConstructor
-@Getter
-@Setter
 public abstract class AbstractGame {
 
+    @Getter
     private final String name;
     private final JavaPlugin plugin;
 
@@ -31,27 +31,30 @@ public abstract class AbstractGame {
     private boolean frozen;
 
     private final LinkedList<Class<? extends AbstractPhase>> phaseLinkedList = new LinkedList<>();
-    private final GameData gameData = new GameData();
+    private GameData gameData = new GameData();
 
-    public void onEnable(){
-
-    }
+    /**
+     *
+     */
+    public void onEnable(){}
 
     public void endPhase(){
         if(isFrozen()) return;
         try {
+            AbstractPhase phase = phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructor(AbstractGame.class).newInstance(this);
+            GamePhaseChangeEvent phaseChangeEvent = new GamePhaseChangeEvent(this, this.currentPhase,phase);
+            Bukkit.getPluginManager().callEvent(phaseChangeEvent);
+            if(phaseChangeEvent.isCancelled()) return;
             if(this.currentPhase!=null)this.currentPhase.disable();
             if(currentPhaseIndex>=phaseLinkedList.size()) {
                 disable();
                 return;
             }
-            AbstractPhase phase = phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructor(AbstractGame.class).newInstance(this);
             phase.enable();
             this.currentPhase = phase;
             this.currentPhaseIndex++;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // TODO: remove
-            e.printStackTrace();
+            getPlugin().getLogger().warning("Error occurred when ending the current phase: " + e.getMessage());
         }
     }
 
@@ -59,12 +62,7 @@ public abstract class AbstractGame {
         if(taskNumber>0) return;
         onEnable();
         endPhase();
-        taskNumber = (new BukkitRunnable(){
-            @Override
-            public void run() {
-                tick();
-            }
-        }).runTaskTimer(plugin,delay,tick).getTaskId();
+        taskNumber = Bukkit.getScheduler().runTaskTimer(plugin,this::tick,delay,tick).getTaskId();
     }
 
     public void addPhaseNext(Class<? extends AbstractPhase> clazz){
@@ -97,5 +95,27 @@ public abstract class AbstractGame {
         if(!frozen&&getCurrentPhase().timeLeft().isZero()) endPhase();
     }
 
+    public AbstractPhase getCurrentPhase() {
+        return currentPhase;
+    }
 
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
+
+    public GameData getGameData() {
+        return gameData;
+    }
+
+    public void setGameData(GameData gameData) {
+        this.gameData = gameData;
+    }
 }
