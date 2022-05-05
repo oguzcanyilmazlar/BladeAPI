@@ -2,12 +2,10 @@ package me.acablade.bladeapi;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import me.acablade.bladeapi.events.GamePhaseChangeEvent;
 import me.acablade.bladeapi.objects.GameData;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
@@ -34,10 +32,13 @@ public abstract class AbstractGame {
     private GameData gameData = new GameData();
 
     /**
-     *
+     * Gets called when the game starts
      */
     public void onEnable(){}
 
+    /**
+     * Ends the current game phase
+     */
     public void endPhase(){
         if(isFrozen()) return;
         try {
@@ -58,63 +59,122 @@ public abstract class AbstractGame {
         }
     }
 
-    public final void enable(long delay, long tick){
+    /**
+     * Starts the game
+     * @param delay Runnable delay
+     * @param period Runnable period
+     */
+    public final void enable(long delay, long period){
         if(taskNumber>0) return;
-        onEnable();
         endPhase();
-        taskNumber = Bukkit.getScheduler().runTaskTimer(plugin,this::tick,delay,tick).getTaskId();
+        taskNumber = Bukkit.getScheduler().runTaskTimer(plugin,this::tick,delay,period).getTaskId();
+        onEnable();
     }
 
+    /**
+     * Adds a phase directly after the current phase
+     * @param clazz Phase you want to add
+     */
     public void addPhaseNext(Class<? extends AbstractPhase> clazz){
         this.phaseLinkedList.add(currentPhaseIndex+1, clazz);
     }
 
+    /**
+     * Removes the next phase
+     */
     public void removeNextPhase(){
         this.phaseLinkedList.remove(currentPhaseIndex+1);
     }
 
+    /**
+     * Adds phase to the last
+     * @param clazz Phase you want to add
+     */
     public void addPhase(Class<? extends AbstractPhase> clazz){
         this.phaseLinkedList.addLast(clazz);
     }
 
+    /**
+     * Removes the last phase
+     */
     public void removeLastPhase(){
         this.phaseLinkedList.removeLast();
     }
 
+    /**
+     * Gets called when the game ends
+     */
     public void onDisable(){
-        if(this.currentPhase!=null)currentPhase.disable();
+
     }
 
+    /**
+     * Gets called every tick
+     */
+    public void onTick(){}
+
+    /**
+     * Disables the minigame
+     */
     public final void disable(){
-        onDisable();
+        if(this.currentPhase!=null)currentPhase.disable();
         Bukkit.getScheduler().cancelTask(taskNumber);
+        onDisable();
     }
 
-    public void tick(){
+    /**
+     * tick method
+     */
+    protected final void tick(){
         if(getCurrentPhase()!=null)getCurrentPhase().tick();
         if(!frozen&&getCurrentPhase().timeLeft().isZero()) endPhase();
+        onTick();
     }
 
+    /**
+     * Returns current phase
+     * @return Current phase
+     */
     public AbstractPhase getCurrentPhase() {
         return currentPhase;
     }
 
+    /**
+     *
+     * @return is minigame frozen
+     */
     public boolean isFrozen() {
         return frozen;
     }
 
+    /**
+     * Sets minigame's frozen state
+     * @param frozen frozen state
+     */
     public void setFrozen(boolean frozen) {
         this.frozen = frozen;
     }
 
+    /**
+     *
+     * @return plugin class
+     */
     public JavaPlugin getPlugin() {
         return plugin;
     }
 
+    /**
+     *
+     * @return game data
+     */
     public GameData getGameData() {
         return gameData;
     }
 
+    /**
+     * Sets the gamedata to game data you want
+     * @param gameData
+     */
     public void setGameData(GameData gameData) {
         this.gameData = gameData;
     }

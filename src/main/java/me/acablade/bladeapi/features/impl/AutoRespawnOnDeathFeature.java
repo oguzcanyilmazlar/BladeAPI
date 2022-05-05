@@ -2,9 +2,9 @@ package me.acablade.bladeapi.features.impl;
 
 import me.acablade.bladeapi.AbstractPhase;
 import me.acablade.bladeapi.features.AbstractFeature;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * @author Acablade/oz
@@ -18,12 +18,7 @@ public class AutoRespawnOnDeathFeature extends AbstractFeature {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event){
-        (new BukkitRunnable(){
-            @Override
-            public void run() {
-                event.getEntity().spigot().respawn();
-            }
-        }).runTaskLater(getAbstractPhase().getGame().getPlugin(),1L);
+        Bukkit.getScheduler().runTaskLater(getAbstractPhase().getGame().getPlugin(), () -> event.getEntity().spigot().respawn(),1L);
     }
 
 

@@ -13,7 +13,7 @@ import java.util.UUID;
 public class Team {
 
     private final String name;
-    private final Object color;
+    private final Object identifier;
     private final int teamSize;
     private final Set<UUID> playerList = new HashSet<>();
 

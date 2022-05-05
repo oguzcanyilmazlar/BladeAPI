@@ -10,7 +10,7 @@ import java.util.Set;
 
 public interface TeamFeatureSupplier<T> {
 
-    public Set<Team> supplyTeams();
+    Set<Team> supplyTeams();
 
 
 }
