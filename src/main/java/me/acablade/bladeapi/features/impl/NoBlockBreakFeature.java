@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 
 /**
- * @author Acablade/oz
+ * Prevents block breaking
  */
 
 public class NoBlockBreakFeature extends AbstractFeature {
@@ -16,7 +16,7 @@ public class NoBlockBreakFeature extends AbstractFeature {
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event){
+    private void onBlockBreak(BlockBreakEvent event){
         event.setCancelled(true);
     }
 }

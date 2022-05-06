@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
- * @author Acablade/oz
+ * Prevents players getting damaged
  */
 public class NoHitFeature extends AbstractFeature {
     public NoHitFeature(AbstractPhase abstractPhase) {
@@ -15,7 +15,7 @@ public class NoHitFeature extends AbstractFeature {
     }
 
     @EventHandler
-    public void onHit(EntityDamageEvent event){
+    private void onHit(EntityDamageEvent event){
         event.setCancelled(event.getEntity() instanceof Player);
     }
 

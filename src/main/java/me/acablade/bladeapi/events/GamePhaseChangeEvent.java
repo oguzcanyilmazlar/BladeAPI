@@ -7,6 +7,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * @author Acablade/oz
+ * Gets fired when the phase changes.
  */
 public class GamePhaseChangeEvent extends GameEvent implements Cancellable {
 

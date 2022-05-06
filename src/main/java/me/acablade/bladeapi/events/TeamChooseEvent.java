@@ -9,6 +9,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * @author Acablade/oz
+ * Gets fired when a player gets assigned to a team
  */
 public class TeamChooseEvent extends GamePlayerEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
@@ -19,6 +20,12 @@ public class TeamChooseEvent extends GamePlayerEvent implements Cancellable {
     @Getter
     private final Team team;
 
+    /**
+     *
+     * @param who Player
+     * @param game Player's game
+     * @param team Team that the player gets assigned to
+     */
     public TeamChooseEvent(Player who, AbstractGame game, Team team) {
         super(who,game);
         this.team = team;

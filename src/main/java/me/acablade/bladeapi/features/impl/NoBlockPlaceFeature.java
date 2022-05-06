@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
- * @author Acablade/oz
+ * Prevents block placing
  */
 public class NoBlockPlaceFeature extends AbstractFeature {
 
@@ -15,7 +15,7 @@ public class NoBlockPlaceFeature extends AbstractFeature {
     }
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event){
+    private void onBlockPlace(BlockPlaceEvent event){
         event.setCancelled(true);
     }
 

@@ -11,7 +11,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import java.util.UUID;
 
 /**
- * @author Acablade/oz
+ * Makes player spectator on death
  */
 public class SpectatorOnDeathFeature extends AbstractFeature {
 
@@ -20,7 +20,7 @@ public class SpectatorOnDeathFeature extends AbstractFeature {
     }
 
     @EventHandler
-    public void onDeath(PlayerDeathEvent event){
+    private void onDeath(PlayerDeathEvent event){
         Player player = event.getEntity();
         UUID uuid = player.getUniqueId();
 

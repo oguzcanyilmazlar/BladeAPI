@@ -15,6 +15,9 @@ import org.bukkit.event.Listener;
 @Getter
 public abstract class AbstractFeature implements Listener {
 
+    /**
+     * Phase the feature is in.
+     */
     private final AbstractPhase abstractPhase;
 
     /**

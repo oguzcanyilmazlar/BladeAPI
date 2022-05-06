@@ -6,6 +6,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * @author Acablade/oz
+ * Gets fired when the player leaves the minigame.
  */
 public class PlayerLeaveGameEvent extends GamePlayerEvent {
 

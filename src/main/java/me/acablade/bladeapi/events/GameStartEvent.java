@@ -5,6 +5,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * @author Acablade/oz
+ * Gets fired when the game gets started.
  */
 public class GameStartEvent extends GameEvent {
 

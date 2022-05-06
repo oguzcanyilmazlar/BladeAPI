@@ -4,11 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.acablade.bladeapi.features.AbstractFeature;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.Temporal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,8 +20,15 @@ public abstract class AbstractPhase {
     private final AbstractGame game;
     private final Instant startInstant = Instant.now();
 
+    /**
+     * All the features
+     */
     private final Map<Class<? extends AbstractFeature>,AbstractFeature> featureMap = new HashMap<>();
 
+    /**
+     * Phase duration
+     * @return Phase duration
+     */
     public abstract Duration duration();
 
     /**

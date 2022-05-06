@@ -6,6 +6,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * @author Acablade/oz
+ * Gets fired when the player joins the minigame.
  */
 public class PlayerJoinGameEvent extends GamePlayerEvent {
 

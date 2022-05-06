@@ -8,17 +8,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
 /**
- * @author Acablade/oz
+ * Makes player spectator on join
  */
 
 public class SpectatorOnJoinFeature extends AbstractFeature {
+
 
     public SpectatorOnJoinFeature(AbstractPhase abstractPhase) {
         super(abstractPhase);
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinGameEvent event){
+    private void onJoin(PlayerJoinGameEvent event){
         Player player = event.getPlayer();
         getAbstractPhase().getGame().getGameData().getSpectatorList().add(player.getUniqueId());
         player.setGameMode(GameMode.SPECTATOR);

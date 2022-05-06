@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
- * @author Acablade/oz
+ * Spawns players automatically on spawn locations set in MapFeature
  */
 
 
@@ -34,7 +34,7 @@ public class SpawnOnSpawnLocationFeature extends AbstractFeature {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinGameEvent event){
+    private void onJoin(PlayerJoinGameEvent event){
 
         Player player = event.getPlayer();
 

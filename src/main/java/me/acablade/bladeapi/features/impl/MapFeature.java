@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Acablade/oz
+ * Holds the spawnpoint locations(extremely early stage of feature).
  */
 @Getter
 public class MapFeature extends AbstractFeature {

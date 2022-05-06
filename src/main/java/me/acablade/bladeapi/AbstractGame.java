@@ -17,18 +17,45 @@ import java.util.LinkedList;
 @RequiredArgsConstructor
 public abstract class AbstractGame {
 
+    /**
+     * Game name
+     */
     @Getter
     private final String name;
+
+    /**
+     * Main plugin
+     */
     private final JavaPlugin plugin;
 
+    /**
+     * Task number so the game doesnt get enabled more than once
+     */
     private int taskNumber = -1;
 
+    /**
+     * Self explanatory
+     */
     private int currentPhaseIndex = 0;
+
+    /**
+     * Current phase
+     */
     private AbstractPhase currentPhase;
 
+    /**
+     * Game frozen state
+     */
     private boolean frozen;
 
+    /**
+     * Phase list
+     */
     private final LinkedList<Class<? extends AbstractPhase>> phaseLinkedList = new LinkedList<>();
+
+    /**
+     * Game data
+     */
     private GameData gameData = new GameData();
 
     /**
@@ -164,7 +191,7 @@ public abstract class AbstractGame {
     }
 
     /**
-     *
+     * Returns game data
      * @return game data
      */
     public GameData getGameData() {
@@ -173,7 +200,7 @@ public abstract class AbstractGame {
 
     /**
      * Sets the gamedata to game data you want
-     * @param gameData
+     * @param gameData GameData
      */
     public void setGameData(GameData gameData) {
         this.gameData = gameData;

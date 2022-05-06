@@ -5,11 +5,15 @@ import me.acablade.bladeapi.objects.Team;
 import java.util.Set;
 
 /**
- * @author Acablade/oz
+ * supplies team feature
  */
 
-public interface TeamFeatureSupplier<T> {
+public interface TeamFeatureSupplier {
 
+    /**
+     * Method to supply teams
+     * @return Teams supplied
+     */
     Set<Team> supplyTeams();
 
 

@@ -7,9 +7,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 /**
- * @author Acablade/oz
+ * Automatically respawns a player on death
  */
-
 public class AutoRespawnOnDeathFeature extends AbstractFeature {
     public AutoRespawnOnDeathFeature(AbstractPhase abstractPhase) {
         super(abstractPhase);
@@ -17,7 +16,7 @@ public class AutoRespawnOnDeathFeature extends AbstractFeature {
 
 
     @EventHandler
-    public void onDeath(PlayerDeathEvent event){
+    private void onDeath(PlayerDeathEvent event){
         Bukkit.getScheduler().runTaskLater(getAbstractPhase().getGame().getPlugin(), () -> event.getEntity().spigot().respawn(),1L);
     }
 

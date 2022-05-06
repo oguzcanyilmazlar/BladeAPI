@@ -6,6 +6,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * @author Acablade/oz
+ * Gets fired when the game is finished.
  */
 public class GameFinishEvent extends GameEvent {
 

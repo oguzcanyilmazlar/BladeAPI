@@ -6,8 +6,6 @@ import me.acablade.bladeapi.events.TeamChooseEvent;
 import me.acablade.bladeapi.features.AbstractFeature;
 import me.acablade.bladeapi.objects.GamePlayer;
 import me.acablade.bladeapi.objects.Team;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -16,12 +14,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * @author Acablade/oz
+ * Adds team
  */
 
 @Getter
@@ -53,14 +49,29 @@ public class TeamFeature extends AbstractFeature {
         return teamSet;
     };
 
+    /**
+     *
+     * @param abstractPhase Phase the game is in.
+     */
     public TeamFeature(AbstractPhase abstractPhase) {
         this(abstractPhase,DEFAULT_TEAM_SUPPLIER);
     }
 
+    /**
+     *
+     * @param phase Phase the game is in
+     * @param supplier Team supplier
+     */
     public TeamFeature(AbstractPhase phase, TeamFeatureSupplier supplier){
         this(phase,supplier,false);
     }
 
+    /**
+     *
+     * @param phase Phase the game is in
+     * @param supplier Team supplier
+     * @param friendlyFire Friendly fire
+     */
     public TeamFeature(AbstractPhase phase, TeamFeatureSupplier supplier, boolean friendlyFire){
         super(phase);
         this.teamFeatureSupplier = supplier;
@@ -91,7 +102,7 @@ public class TeamFeature extends AbstractFeature {
     }
 
     @EventHandler
-    public void onDamage(EntityDamageByEntityEvent event){
+    private void onDamage(EntityDamageByEntityEvent event){
         if(isFriendlyFire()) return;
 
         Entity damager = event.getDamager();
@@ -132,6 +143,11 @@ public class TeamFeature extends AbstractFeature {
 
     }
 
+    /**
+     * Get a team with specified name
+     * @param name Team name
+     * @return Team
+     */
     public Optional<Team> getTeam(String name) {
         return teamSet.stream().filter(team -> team.getName().equalsIgnoreCase(name)).findFirst();
     }
