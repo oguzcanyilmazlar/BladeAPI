@@ -3,5 +3,5 @@
 Minimal, feature based minigame api. 
 
 [Wiki](https://github.com/Acablade/BladeAPI/wiki)  
-[Example project](https://github.com/Acablade/TheFloorIsLavaRevamped)
+[Example project](https://github.com/Acablade/TheFloorIsLavaRevamped)  
 [Javadocs](https://acablade.github.io/bladeapi/javadocs)
