@@ -82,7 +82,7 @@ public abstract class AbstractGame {
             this.currentPhase = phase;
             this.currentPhaseIndex++;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            getPlugin().getLogger().warning("Error occurred when ending the current phase: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
