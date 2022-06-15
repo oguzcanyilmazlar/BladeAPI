@@ -98,9 +98,9 @@ public abstract class AbstractGame {
      */
     public final void enable(long delay, long period){
         if(taskNumber>0) return;
+        onEnable();
         endPhase();
         taskNumber = Bukkit.getScheduler().runTaskTimer(plugin,this::tick,delay,period).getTaskId();
-        onEnable();
     }
 
     /**
