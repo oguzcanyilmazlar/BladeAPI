@@ -7,6 +7,7 @@ import me.acablade.bladeapi.objects.GameData;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 
@@ -73,7 +74,11 @@ public abstract class AbstractGame {
                 disable();
                 return;
             }
-            AbstractPhase phase = (AbstractPhase) phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructors()[0].newInstance(this);
+            Constructor constructor = phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructors()[0];
+            if(!AbstractGame.class.isAssignableFrom(constructor.getParameterTypes()[0])){
+                return;
+            }
+            AbstractPhase phase = (AbstractPhase) constructor.newInstance(this);
             GamePhaseChangeEvent phaseChangeEvent = new GamePhaseChangeEvent(this, this.currentPhase,phase);
             Bukkit.getPluginManager().callEvent(phaseChangeEvent);
             if(phaseChangeEvent.isCancelled()) return;
