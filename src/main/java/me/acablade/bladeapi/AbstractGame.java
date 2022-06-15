@@ -73,7 +73,7 @@ public abstract class AbstractGame {
                 disable();
                 return;
             }
-            AbstractPhase phase = phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructor(AbstractGame.class).newInstance(this);
+            AbstractPhase phase = (AbstractPhase) phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructors()[0].newInstance(this);
             GamePhaseChangeEvent phaseChangeEvent = new GamePhaseChangeEvent(this, this.currentPhase,phase);
             Bukkit.getPluginManager().callEvent(phaseChangeEvent);
             if(phaseChangeEvent.isCancelled()) return;
@@ -81,7 +81,7 @@ public abstract class AbstractGame {
             phase.enable();
             this.currentPhase = phase;
             this.currentPhaseIndex++;
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
