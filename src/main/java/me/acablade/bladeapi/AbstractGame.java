@@ -73,7 +73,8 @@ public abstract class AbstractGame {
                 disable();
                 return;
             }
-            AbstractPhase phase = phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructor(AbstractGame.class).newInstance(this);
+            Class<? extends AbstractPhase> phaseClass = phaseLinkedList.get(currentPhaseIndex);
+            AbstractPhase phase = phaseClass.getDeclaredConstructor(phaseClass).newInstance(this);
             GamePhaseChangeEvent phaseChangeEvent = new GamePhaseChangeEvent(this, this.currentPhase,phase);
             Bukkit.getPluginManager().callEvent(phaseChangeEvent);
             if(phaseChangeEvent.isCancelled()) return;

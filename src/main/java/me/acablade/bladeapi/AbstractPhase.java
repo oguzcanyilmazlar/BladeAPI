@@ -7,6 +7,7 @@ import me.acablade.bladeapi.features.AbstractFeature;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ public abstract class AbstractPhase {
     /**
      * All the features
      */
-    private final Map<Class<? extends AbstractFeature>,AbstractFeature> featureMap = new HashMap<>();
+    private final Map<Class<? extends AbstractFeature>,AbstractFeature> featureMap = new LinkedHashMap<>();
 
     /**
      * Phase duration
