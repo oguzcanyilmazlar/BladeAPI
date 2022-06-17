@@ -2,6 +2,7 @@ package me.acablade.bladeapi;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import me.acablade.bladeapi.features.AbstractFeature;
 
 import java.time.Duration;
@@ -19,6 +20,9 @@ public abstract class AbstractPhase {
 
     @Getter
     private final AbstractGame game;
+
+    @Getter
+    @Setter
     private final Instant startInstant = Instant.now();
 
     /**
