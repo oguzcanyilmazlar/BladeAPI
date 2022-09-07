@@ -23,7 +23,7 @@ public abstract class AbstractPhase {
 
     @Getter
     @Setter
-    private final Instant startInstant = Instant.now();
+    private Instant startInstant = Instant.now();
 
     /**
      * All the features
