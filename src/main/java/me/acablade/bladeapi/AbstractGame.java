@@ -2,7 +2,9 @@ package me.acablade.bladeapi;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.acablade.bladeapi.events.GameFinishEvent;
 import me.acablade.bladeapi.events.GamePhaseChangeEvent;
+import me.acablade.bladeapi.events.GameStartEvent;
 import me.acablade.bladeapi.objects.GameData;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -74,7 +76,7 @@ public abstract class AbstractGame {
                 disable();
                 return;
             }
-            Constructor constructor = phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructors()[0];
+            Constructor<?> constructor = phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructors()[0];
             if(!AbstractGame.class.isAssignableFrom(constructor.getParameterTypes()[0])){
                 return;
             }
@@ -98,6 +100,7 @@ public abstract class AbstractGame {
      */
     public final void enable(long delay, long period){
         if(taskNumber>0) return;
+        plugin.getServer().getPluginManager().callEvent(new GameStartEvent(this));
         onEnable();
         endPhase();
         taskNumber = Bukkit.getScheduler().runTaskTimer(plugin,this::tick,delay,period).getTaskId();
@@ -149,6 +152,7 @@ public abstract class AbstractGame {
      * Disables the minigame
      */
     public final void disable(){
+        plugin.getServer().getPluginManager().callEvent(new GameFinishEvent(this));
         if(this.currentPhase!=null)currentPhase.disable();
         Bukkit.getScheduler().cancelTask(taskNumber);
         onDisable();
