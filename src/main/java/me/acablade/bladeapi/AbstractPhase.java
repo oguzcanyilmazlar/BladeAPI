@@ -15,10 +15,10 @@ import java.util.Map;
  */
 
 @RequiredArgsConstructor
-public abstract class AbstractPhase<T extends JavaPlugin> {
+public abstract class AbstractPhase<T extends AbstractGame> {
 
     @Getter
-    private final AbstractGame<T> game;
+    private final T game;
 
     @Getter
     private Instant startInstant = Instant.now();

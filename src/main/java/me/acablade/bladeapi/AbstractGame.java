@@ -40,11 +40,11 @@ public abstract class AbstractGame<T extends JavaPlugin> {
     @Getter
     private long period = -1;
 
-    private AbstractPhase<T> currentPhase;
+    private AbstractPhase currentPhase;
 
     private boolean frozen;
 
-    private final LinkedList<AbstractPhase<T>> phaseLinkedList = new LinkedList<>();
+    private final LinkedList<AbstractPhase> phaseLinkedList = new LinkedList<>();
 
     private GameData gameData = new GameData();
 
@@ -62,7 +62,7 @@ public abstract class AbstractGame<T extends JavaPlugin> {
             disable();
             return;
         }
-        AbstractPhase<T> phase = phaseLinkedList.get(currentPhaseIndex);
+        AbstractPhase phase = phaseLinkedList.get(currentPhaseIndex);
         GamePhaseChangeEvent phaseChangeEvent = new GamePhaseChangeEvent(this, this.currentPhase,phase);
         Bukkit.getPluginManager().callEvent(phaseChangeEvent);
         if(phaseChangeEvent.isCancelled()) return;
@@ -87,7 +87,7 @@ public abstract class AbstractGame<T extends JavaPlugin> {
     /**
      * Adds a phase directly after the current phase
      */
-    public void addPhaseNext(AbstractPhase<T> phase){
+    public void addPhaseNext(AbstractPhase phase){
         this.phaseLinkedList.add(currentPhaseIndex+1, phase);
     }
 
@@ -101,7 +101,7 @@ public abstract class AbstractGame<T extends JavaPlugin> {
     /**
      * Adds phase to the last
      */
-    public void addPhase(AbstractPhase<T> phase){
+    public void addPhase(AbstractPhase phase){
         this.phaseLinkedList.addLast(phase);
     }
 
@@ -146,7 +146,7 @@ public abstract class AbstractGame<T extends JavaPlugin> {
     /**
      * @return Current phase
      */
-    public AbstractPhase<T> getCurrentPhase() {
+    public AbstractPhase getCurrentPhase() {
         return currentPhase;
     }
 

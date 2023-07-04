@@ -2,6 +2,7 @@ package me.acablade.bladeapi.features;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.acablade.bladeapi.AbstractGame;
 import me.acablade.bladeapi.AbstractPhase;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -14,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 @RequiredArgsConstructor
 @Getter
-public abstract class AbstractFeature<T extends JavaPlugin> implements Listener {
+public abstract class AbstractFeature<T extends AbstractGame> implements Listener {
 
     /**
      * Phase the feature is in.
