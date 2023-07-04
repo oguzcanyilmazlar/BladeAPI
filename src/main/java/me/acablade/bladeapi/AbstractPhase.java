@@ -2,12 +2,11 @@ package me.acablade.bladeapi;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import me.acablade.bladeapi.features.AbstractFeature;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,19 +15,26 @@ import java.util.Map;
  */
 
 @RequiredArgsConstructor
-public abstract class AbstractPhase {
+public abstract class AbstractPhase<T extends JavaPlugin> {
 
     @Getter
-    private final AbstractGame game;
+    private final AbstractGame<T> game;
 
     @Getter
-    @Setter
     private Instant startInstant = Instant.now();
 
     /**
      * All the features
      */
-    private final Map<Class<? extends AbstractFeature>,AbstractFeature> featureMap = new LinkedHashMap<>();
+    private final Map<Class<? extends AbstractFeature<T>>,AbstractFeature<T>> featureMap = new LinkedHashMap<>();
+
+
+    /**
+     * Resets the timer.
+     */
+    public void resetTimer(){
+        this.startInstant = Instant.now();
+    }
 
     /**
      * Phase duration
@@ -55,14 +61,15 @@ public abstract class AbstractPhase {
      * Adds feature to the phase
      * @param feature Specified feature
      */
-    public void addFeature(AbstractFeature feature){
-        featureMap.put(feature.getClass(), feature);
+    public void addFeature(AbstractFeature<T> feature){
+        featureMap.put((Class<? extends AbstractFeature<T>>) feature.getClass(), feature);
     }
 
     /**
      * Enables the phase
      */
     public final void enable(){
+        this.startInstant = Instant.now(); // not using resetTimer() in case of override
         onEnable();
         featureMap.values().forEach(AbstractFeature::enable);
     }
@@ -96,11 +103,11 @@ public abstract class AbstractPhase {
     /**
      * Gets the specified feature (can return null)
      * @param clazz Specified feature's class
-     * @param <T> Specified feature
+     * @param <R> Specified feature
      * @return Specified feature
      */
-    public <T extends AbstractFeature> T getFeature(Class<T> clazz){
-        return (T) featureMap.get(clazz);
+    public <R extends AbstractFeature<T>> R getFeature(Class<R> clazz){
+        return (R) featureMap.get(clazz);
     }
 
 

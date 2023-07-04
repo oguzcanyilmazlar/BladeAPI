@@ -1,7 +1,6 @@
 package me.acablade.bladeapi.events;
 
 import me.acablade.bladeapi.AbstractGame;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 /**

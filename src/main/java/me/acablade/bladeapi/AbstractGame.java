@@ -9,16 +9,15 @@ import me.acablade.bladeapi.objects.GameData;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
+import java.util.UUID;
 
 /**
  * @author Acablade/oz
  */
 
 @RequiredArgsConstructor
-public abstract class AbstractGame {
+public abstract class AbstractGame<T extends JavaPlugin> {
 
     /**
      * Game name
@@ -29,36 +28,24 @@ public abstract class AbstractGame {
     /**
      * Main plugin
      */
-    private final JavaPlugin plugin;
+    private final T plugin;
 
     /**
-     * Task number so the game doesnt get enabled more than once
+     * Task number so the game doesn't get enabled more than once
      */
     private int taskNumber = -1;
 
-    /**
-     * Self explanatory
-     */
     private int currentPhaseIndex = 0;
 
-    /**
-     * Current phase
-     */
-    private AbstractPhase currentPhase;
+    @Getter
+    private long period = -1;
 
-    /**
-     * Game frozen state
-     */
+    private AbstractPhase<T> currentPhase;
+
     private boolean frozen;
 
-    /**
-     * Phase list
-     */
-    private final LinkedList<Class<? extends AbstractPhase>> phaseLinkedList = new LinkedList<>();
+    private final LinkedList<AbstractPhase<T>> phaseLinkedList = new LinkedList<>();
 
-    /**
-     * Game data
-     */
     private GameData gameData = new GameData();
 
     /**
@@ -71,32 +58,22 @@ public abstract class AbstractGame {
      */
     public void endPhase(){
         if(isFrozen()) return;
-        try {
-            if(currentPhaseIndex>=phaseLinkedList.size()) {
-                disable();
-                return;
-            }
-            Constructor<?> constructor = phaseLinkedList.get(currentPhaseIndex).getDeclaredConstructors()[0];
-            if(!AbstractGame.class.isAssignableFrom(constructor.getParameterTypes()[0])){
-                return;
-            }
-            AbstractPhase phase = (AbstractPhase) constructor.newInstance(this);
-            GamePhaseChangeEvent phaseChangeEvent = new GamePhaseChangeEvent(this, this.currentPhase,phase);
-            Bukkit.getPluginManager().callEvent(phaseChangeEvent);
-            if(phaseChangeEvent.isCancelled()) return;
-            if(this.currentPhase!=null)this.currentPhase.disable();
-            phase.enable();
-            this.currentPhase = phase;
-            this.currentPhaseIndex++;
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        if(currentPhaseIndex>=phaseLinkedList.size()) {
+            disable();
+            return;
         }
+        AbstractPhase<T> phase = phaseLinkedList.get(currentPhaseIndex);
+        GamePhaseChangeEvent phaseChangeEvent = new GamePhaseChangeEvent(this, this.currentPhase,phase);
+        Bukkit.getPluginManager().callEvent(phaseChangeEvent);
+        if(phaseChangeEvent.isCancelled()) return;
+        if(this.currentPhase!=null)this.currentPhase.disable();
+        phase.enable();
+        this.currentPhase = phase;
+        this.currentPhaseIndex++;
     }
 
     /**
      * Starts the game
-     * @param delay Runnable delay
-     * @param period Runnable period
      */
     public final void enable(long delay, long period){
         if(taskNumber>0) return;
@@ -104,14 +81,14 @@ public abstract class AbstractGame {
         onEnable();
         endPhase();
         taskNumber = Bukkit.getScheduler().runTaskTimer(plugin,this::tick,delay,period).getTaskId();
+        this.period = period;
     }
 
     /**
      * Adds a phase directly after the current phase
-     * @param clazz Phase you want to add
      */
-    public void addPhaseNext(Class<? extends AbstractPhase> clazz){
-        this.phaseLinkedList.add(currentPhaseIndex+1, clazz);
+    public void addPhaseNext(AbstractPhase<T> phase){
+        this.phaseLinkedList.add(currentPhaseIndex+1, phase);
     }
 
     /**
@@ -123,10 +100,9 @@ public abstract class AbstractGame {
 
     /**
      * Adds phase to the last
-     * @param clazz Phase you want to add
      */
-    public void addPhase(Class<? extends AbstractPhase> clazz){
-        this.phaseLinkedList.addLast(clazz);
+    public void addPhase(AbstractPhase<T> phase){
+        this.phaseLinkedList.addLast(phase);
     }
 
     /**
@@ -168,15 +144,13 @@ public abstract class AbstractGame {
     }
 
     /**
-     * Returns current phase
      * @return Current phase
      */
-    public AbstractPhase getCurrentPhase() {
+    public AbstractPhase<T> getCurrentPhase() {
         return currentPhase;
     }
 
     /**
-     *
      * @return is minigame frozen
      */
     public boolean isFrozen() {
@@ -185,22 +159,19 @@ public abstract class AbstractGame {
 
     /**
      * Sets minigame's frozen state
-     * @param frozen frozen state
      */
     public void setFrozen(boolean frozen) {
         this.frozen = frozen;
     }
 
     /**
-     *
      * @return plugin class
      */
-    public JavaPlugin getPlugin() {
+    public T getPlugin() {
         return plugin;
     }
 
     /**
-     * Returns game data
      * @return game data
      */
     public GameData getGameData() {
@@ -213,5 +184,26 @@ public abstract class AbstractGame {
      */
     public void setGameData(GameData gameData) {
         this.gameData = gameData;
+    }
+
+    public void announce(String msg){
+        getGameData().allPlayers().forEach(player -> player.sendMessage(msg));
+
+    }
+
+    public void addPlayer(UUID uuid){
+        this.gameData.getPlayerList().add(uuid);
+    }
+
+    public void removePlayer(UUID uuid){
+        this.gameData.getPlayerList().remove(uuid);
+    }
+
+    public void addSpectator(UUID uuid){
+        this.gameData.getSpectatorList().add(uuid);
+    }
+
+    public void removeSpectator(UUID uuid){
+        this.gameData.getSpectatorList().remove(uuid);
     }
 }

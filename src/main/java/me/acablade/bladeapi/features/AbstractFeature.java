@@ -6,6 +6,7 @@ import me.acablade.bladeapi.AbstractPhase;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author Acablade/oz
@@ -13,12 +14,12 @@ import org.bukkit.event.Listener;
 
 @RequiredArgsConstructor
 @Getter
-public abstract class AbstractFeature implements Listener {
+public abstract class AbstractFeature<T extends JavaPlugin> implements Listener {
 
     /**
      * Phase the feature is in.
      */
-    private final AbstractPhase abstractPhase;
+    private final AbstractPhase<T> abstractPhase;
 
     /**
      * Gets called when the feature gets enabled
@@ -34,6 +35,12 @@ public abstract class AbstractFeature implements Listener {
      * Gets called every tick
      */
     public void onTick(){}
+
+
+    protected void runLater(Runnable runnable, long delay){
+        JavaPlugin plugin = this.abstractPhase.getGame().getPlugin();
+        plugin.getServer().getScheduler().runTaskLater(plugin, runnable, delay);
+    }
 
     /**
      * Enables the feature
