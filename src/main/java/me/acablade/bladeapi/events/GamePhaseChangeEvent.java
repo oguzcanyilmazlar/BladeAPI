@@ -1,23 +1,23 @@
 package me.acablade.bladeapi.events;
 
-import me.acablade.bladeapi.AbstractGame;
-import me.acablade.bladeapi.AbstractPhase;
+import lombok.Getter;
+import me.acablade.bladeapi.IGame;
+import me.acablade.bladeapi.IPhase;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-/**
- * @author Acablade/oz
- * Gets fired when the phase changes.
- */
 public class GamePhaseChangeEvent extends GameEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final AbstractPhase prevPhase;
-    private final AbstractPhase nextPhase;
+
+    @Getter
+    private final IPhase prevPhase;
+    @Getter
+    private final IPhase nextPhase;
 
     private boolean cancelled;
 
-    public GamePhaseChangeEvent(AbstractGame game, AbstractPhase prevPhase, AbstractPhase nextPhase) {
+    public GamePhaseChangeEvent(IGame game, IPhase prevPhase, IPhase nextPhase) {
         super(game);
         this.prevPhase = prevPhase;
         this.nextPhase = nextPhase;
@@ -32,13 +32,6 @@ public class GamePhaseChangeEvent extends GameEvent implements Cancellable {
         return HANDLERS;
     }
 
-    public AbstractPhase getNextPhase() {
-        return nextPhase;
-    }
-
-    public AbstractPhase getPrevPhase() {
-        return prevPhase;
-    }
 
     @Override
     public boolean isCancelled() {

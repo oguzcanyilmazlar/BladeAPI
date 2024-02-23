@@ -1,20 +1,17 @@
 package me.acablade.bladeapi.events;
 
-import me.acablade.bladeapi.AbstractGame;
+import me.acablade.bladeapi.IGame;
 import org.bukkit.event.Event;
 
-/**
- * @author Acablade/oz
- */
 public abstract class GameEvent extends Event {
 
-    protected final AbstractGame game;
+    protected final IGame game;
 
-    public GameEvent(AbstractGame abstractGame){
+    public GameEvent(IGame abstractGame){
         this.game = abstractGame;
     }
 
-    public final AbstractGame getGame() {
+    public final IGame getGame() {
         return game;
     }
 }

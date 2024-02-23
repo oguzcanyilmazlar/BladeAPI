@@ -1,16 +1,13 @@
 package me.acablade.bladeapi.events;
 
-import me.acablade.bladeapi.AbstractGame;
+import me.acablade.bladeapi.IGame;
 import org.bukkit.entity.Player;
 
-/**
- * @author Acablade/oz
- */
 public abstract class GamePlayerEvent extends GameEvent{
 
     protected final Player player;
 
-    public GamePlayerEvent(Player player,AbstractGame abstractGame) {
+    public GamePlayerEvent(Player player, IGame abstractGame) {
         super(abstractGame);
         this.player = player;
     }

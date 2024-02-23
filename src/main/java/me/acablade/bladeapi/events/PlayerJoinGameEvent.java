@@ -1,18 +1,14 @@
 package me.acablade.bladeapi.events;
 
-import me.acablade.bladeapi.AbstractGame;
+import me.acablade.bladeapi.IGame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-/**
- * @author Acablade/oz
- * Gets fired when the player joins the minigame.
- */
 public class PlayerJoinGameEvent extends GamePlayerEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public PlayerJoinGameEvent(Player who, AbstractGame game) {
+    public PlayerJoinGameEvent(Player who, IGame game) {
         super(who,game);
     }
 

@@ -1,17 +1,13 @@
 package me.acablade.bladeapi.events;
 
-import me.acablade.bladeapi.AbstractGame;
+import me.acablade.bladeapi.IGame;
 import org.bukkit.event.HandlerList;
 
-/**
- * @author Acablade/oz
- * Gets fired when the game gets started.
- */
 public class GameStartEvent extends GameEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public GameStartEvent(AbstractGame game) {
+    public GameStartEvent(IGame game) {
         super(game);
     }
 

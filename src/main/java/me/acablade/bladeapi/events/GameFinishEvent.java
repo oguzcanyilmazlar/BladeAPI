@@ -1,6 +1,7 @@
 package me.acablade.bladeapi.events;
 
 import me.acablade.bladeapi.AbstractGame;
+import me.acablade.bladeapi.IGame;
 import org.bukkit.event.HandlerList;
 
 /**
@@ -11,7 +12,7 @@ public class GameFinishEvent extends GameEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public GameFinishEvent(AbstractGame game) {
+    public GameFinishEvent(IGame game) {
         super(game);
     }
 
