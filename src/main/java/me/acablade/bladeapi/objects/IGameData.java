@@ -4,7 +4,11 @@ import java.util.Set;
 
 public interface IGameData {
 
-    public <T extends IActor> Set<T> getPlayers();
-    public <T extends IActor> Set<T> getSpectators();
+    <T extends IActor> Set<T> getActors();
+
+    void addActor(IActor actor);
+    void removeActor(IActor actor);
+    boolean contains(IActor actor);
+
 
 }

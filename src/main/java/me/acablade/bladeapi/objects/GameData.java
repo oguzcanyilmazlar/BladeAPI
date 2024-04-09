@@ -1,19 +1,28 @@
 package me.acablade.bladeapi.objects;
 
-import java.util.*;
+import java.util.Set;
 
-public class GameData implements IGameData {
+public class GameData implements IGameData{
 
-    private final Set<BukkitActor> playerList = new HashSet<>();
-    private final Set<BukkitActor> spectatorList = new HashSet<>();
 
-    public Set<BukkitActor> getPlayers(){
-        return playerList;
+
+    @Override
+    public <T extends IActor> Set<T> getActors() {
+        return null;
     }
 
-    public Set<BukkitActor> getSpectators(){
-        return spectatorList;
+    @Override
+    public void addActor(IActor actor) {
+
     }
 
+    @Override
+    public void removeActor(IActor actor) {
 
+    }
+
+    @Override
+    public boolean contains(IActor actor) {
+        return false;
+    }
 }

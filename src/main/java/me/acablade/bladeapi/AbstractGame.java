@@ -7,12 +7,14 @@ import me.acablade.bladeapi.events.GameFinishEvent;
 import me.acablade.bladeapi.events.GamePhaseChangeEvent;
 import me.acablade.bladeapi.events.GameStartEvent;
 import me.acablade.bladeapi.objects.BukkitActor;
-import me.acablade.bladeapi.objects.GameData;
+import me.acablade.bladeapi.objects.IActor;
+import me.acablade.bladeapi.objects.IGameData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public abstract class AbstractGame implements IGame{
@@ -42,9 +44,10 @@ public abstract class AbstractGame implements IGame{
     @Setter
     private boolean frozen;
 
-    @Getter
-    @Setter
-    private GameData gameData = new GameData();
+    protected AbstractGame(String name, JavaPlugin plugin) {
+        this.name = name;
+        this.plugin = plugin;
+    }
 
     public void onEnable(){}
 
@@ -52,7 +55,14 @@ public abstract class AbstractGame implements IGame{
 
     public void onTick(){}
 
+    @Override
+    public IGameData getGameData() {
+        return null;
+    }
 
+    public boolean isFrozen() {
+        return frozen;
+    }
 
     public void endPhase(){
         if(isFrozen()) return;
@@ -79,7 +89,7 @@ public abstract class AbstractGame implements IGame{
         this.period = period;
     }
 
-    public void addPhaseNext(AbstractPhase phase){
+    public void addPhaseNext(IPhase phase){
         this.phaseLinkedList.add(currentPhaseIndex+1, phase);
     }
 
@@ -87,7 +97,7 @@ public abstract class AbstractGame implements IGame{
         this.phaseLinkedList.remove(currentPhaseIndex+1);
     }
 
-    public void addPhase(AbstractPhase phase){
+    public void addPhase(IPhase phase){
         this.phaseLinkedList.addLast(phase);
     }
 
@@ -102,49 +112,30 @@ public abstract class AbstractGame implements IGame{
         onDisable();
     }
 
+    public IPhase getCurrentPhase(){
+        return this.phaseLinkedList.get(this.currentPhaseIndex);
+    }
+
     protected final void tick(){
         if(getCurrentPhase()!=null)getCurrentPhase().tick();
         if(!frozen&&(getCurrentPhase()!=null&&getCurrentPhase().timeLeft().isZero())) endPhase();
         onTick();
     }
 
-    public final Collection<Player> allPlayers(){
-        Collection<Player> players = new ArrayList<>();
-        this.gameData.getPlayers().stream().map(BukkitActor::getPlayer).forEach(players::add);
-        this.gameData.getSpectators().stream().map(BukkitActor::getPlayer).forEach(players::add);
-        return players;
+    public Stream<IActor> getAllPlayers(){
+
+        return getGameData().getActors().stream();
     }
 
     public void announce(String msg){
-        allPlayers().forEach(player -> player.sendMessage(msg));
+        getAllPlayers().forEach(player -> player.sendMessage(msg));
     }
 
-    public void addPlayer(Player player){
-        this.gameData.getPlayers().add(BukkitActor.of(player));
-    }
-    public void addPlayer(UUID uuid){
-        this.addPlayer(Bukkit.getPlayer(uuid));
+    public void addActor(IActor actor){
+        this.getGameData().addActor(actor);
     }
 
-    public void removePlayer(Player player){
-        this.gameData.getPlayers().remove(BukkitActor.of(player));
-    }
-    public void removePlayer(UUID uuid){
-        this.removePlayer(Bukkit.getPlayer(uuid));
-    }
-
-
-    public void addSpectator(Player player){
-        this.gameData.getSpectators().add(BukkitActor.of(player));
-    }
-    public void addSpectator(UUID uuid){
-        this.addSpectator(Bukkit.getPlayer(uuid));
-    }
-
-    public void removeSpectator(Player player){
-        this.gameData.getSpectators().remove(BukkitActor.of(player));
-    }
-    public void removeSpectator(UUID uuid){
-        this.removeSpectator(Bukkit.getPlayer(uuid));
+    public void removeActor(IActor actor){
+        this.getGameData().removeActor(actor);
     }
 }
