@@ -44,11 +44,6 @@ public abstract class AbstractGame implements IGame{
     @Setter
     private boolean frozen;
 
-    protected AbstractGame(String name, JavaPlugin plugin) {
-        this.name = name;
-        this.plugin = plugin;
-    }
-
     public void onEnable(){}
 
     public void onDisable(){}
@@ -58,10 +53,6 @@ public abstract class AbstractGame implements IGame{
     @Override
     public IGameData getGameData() {
         return null;
-    }
-
-    public boolean isFrozen() {
-        return frozen;
     }
 
     public void endPhase(){
