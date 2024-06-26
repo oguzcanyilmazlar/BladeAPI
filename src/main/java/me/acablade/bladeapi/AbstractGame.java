@@ -1,20 +1,18 @@
 package me.acablade.bladeapi;
 
+import java.util.LinkedList;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.acablade.bladeapi.events.GameFinishEvent;
-import me.acablade.bladeapi.events.GamePhaseChangeEvent;
 import me.acablade.bladeapi.events.GameStartEvent;
-import me.acablade.bladeapi.objects.BukkitActor;
-import me.acablade.bladeapi.objects.IActor;
+import me.acablade.bladeapi.events.GameStateChangeEvent;
+import me.acablade.bladeapi.events.GameTickEvent;
 import me.acablade.bladeapi.objects.IGameData;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.*;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public abstract class AbstractGame implements IGame{
@@ -25,7 +23,7 @@ public abstract class AbstractGame implements IGame{
     @Getter
     private final JavaPlugin plugin;
 
-    private final LinkedList<IPhase> phaseLinkedList = new LinkedList<>();
+    private final LinkedList<IState> phaseLinkedList = new LinkedList<>();
 
     private int taskNumber = -1;
 
@@ -38,7 +36,7 @@ public abstract class AbstractGame implements IGame{
 
     @Getter
     @Setter
-    private IPhase currentPhase;
+    private IState currentPhase;
 
     @Getter
     @Setter
@@ -61,8 +59,8 @@ public abstract class AbstractGame implements IGame{
             disable();
             return;
         }
-        IPhase phase = phaseLinkedList.get(currentPhaseIndex);
-        GamePhaseChangeEvent phaseChangeEvent = new GamePhaseChangeEvent(this, this.currentPhase,phase);
+        IState phase = phaseLinkedList.get(currentPhaseIndex);
+        GameStateChangeEvent phaseChangeEvent = new GameStateChangeEvent(this, this.currentPhase,phase);
         Bukkit.getPluginManager().callEvent(phaseChangeEvent);
         if(phaseChangeEvent.isCancelled()) return;
         if(this.currentPhase!=null)this.currentPhase.disable();
@@ -71,7 +69,7 @@ public abstract class AbstractGame implements IGame{
         this.currentPhaseIndex++;
     }
 
-    public final void enable(long delay, long period){
+    public void enable(long delay, long period){
         if(taskNumber>0) return;
         plugin.getServer().getPluginManager().callEvent(new GameStartEvent(this));
         onEnable();
@@ -80,7 +78,7 @@ public abstract class AbstractGame implements IGame{
         this.period = period;
     }
 
-    public void addPhaseNext(IPhase phase){
+    public void addPhaseNext(IState phase){
         this.phaseLinkedList.add(currentPhaseIndex+1, phase);
     }
 
@@ -88,7 +86,7 @@ public abstract class AbstractGame implements IGame{
         this.phaseLinkedList.remove(currentPhaseIndex+1);
     }
 
-    public void addPhase(IPhase phase){
+    public void addPhase(IState phase){
         this.phaseLinkedList.addLast(phase);
     }
 
@@ -96,37 +94,21 @@ public abstract class AbstractGame implements IGame{
         this.phaseLinkedList.removeLast();
     }
 
-    public final void disable(){
+    public void disable(){
         plugin.getServer().getPluginManager().callEvent(new GameFinishEvent(this));
         if(this.currentPhase!=null)currentPhase.disable();
         Bukkit.getScheduler().cancelTask(taskNumber);
         onDisable();
     }
 
-    public IPhase getCurrentPhase(){
+    public IState getCurrentPhase(){
         return this.phaseLinkedList.get(this.currentPhaseIndex);
     }
 
-    protected final void tick(){
+    protected void tick(){
+    	plugin.getServer().getPluginManager().callEvent(new GameTickEvent(this));
         if(getCurrentPhase()!=null)getCurrentPhase().tick();
         if(!frozen&&(getCurrentPhase()!=null&&getCurrentPhase().timeLeft().isZero())) endPhase();
         onTick();
-    }
-
-    public Stream<IActor> getAllPlayers(){
-
-        return getGameData().getActors().stream();
-    }
-
-    public void announce(String msg){
-        getAllPlayers().forEach(player -> player.sendMessage(msg));
-    }
-
-    public void addActor(IActor actor){
-        this.getGameData().addActor(actor);
-    }
-
-    public void removeActor(IActor actor){
-        this.getGameData().removeActor(actor);
     }
 }

@@ -5,7 +5,12 @@ import java.util.Collection;
 
 public class NoDuplicateArrayList<T> extends ArrayList<T> {
 
-    public NoDuplicateArrayList(Collection<? extends T> c) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3493293444393599252L;
+
+	public NoDuplicateArrayList(Collection<? extends T> c) {
         super(c);
     }
 

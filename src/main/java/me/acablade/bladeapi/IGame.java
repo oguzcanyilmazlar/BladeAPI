@@ -1,8 +1,10 @@
 package me.acablade.bladeapi;
 
+import org.bukkit.event.Listener;
+
 import me.acablade.bladeapi.objects.IGameData;
 
-public interface  IGame {
+public interface IGame extends Listener {
 
     public void onEnable();
     public void onDisable();
@@ -12,12 +14,12 @@ public interface  IGame {
     public void disable();
 
 
-    IGameData getGameData();
+    public IGameData getGameData();
 
 
-    public void addPhaseNext(IPhase phase);
+    public void addPhaseNext(IState phase);
     public void removeNextPhase();
-    public void addPhase(IPhase phase);
+    public void addPhase(IState phase);
     public void removeLastPhase();
 
 
