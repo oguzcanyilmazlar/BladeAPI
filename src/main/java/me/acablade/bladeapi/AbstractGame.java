@@ -31,24 +31,31 @@ public abstract class AbstractGame implements IGame{
     private long period = -1;
 
 
-    @Getter
     @Setter
     private IState currentState;
 
-    @Getter
     @Setter
     private boolean frozen;
 
     @Getter
     private final GameContext gameContext;
 
+    private boolean statesLocked = false;
     public AbstractGame(String name, JavaPlugin plugin) {
         this.name = name;
         this.plugin = plugin;
         this.gameContext = new GameContext(plugin, this);
     }
 
-    private boolean statesLocked = false;
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    @Override
+    public IState getCurrentState() {
+        return currentState;
+    }
 
     @Override
     public void onEnable(){}
@@ -57,10 +64,18 @@ public abstract class AbstractGame implements IGame{
     public void onDisable(){}
 
     @Override
-    public void onTick(){}
+    public void onTick(){
+        assertMainThread();
+    }
 
+    private void assertMainThread() {
+        if (!Bukkit.isPrimaryThread()) {
+            throw new IllegalStateException("Game state can only be modified from the main server thread.");
+        }
+    }
 
     public void endPhase() {
+        assertMainThread();
         if (isFrozen()) return;
 
         if (currentState != null) {
@@ -91,6 +106,7 @@ public abstract class AbstractGame implements IGame{
 
     @Override
     public void enable(long delay, long period){
+        assertMainThread();
         if (statesLocked) throw new IllegalStateException("Game already started, states cannot be modified.");
         if(taskNumber != -1) return;
         plugin.getServer().getPluginManager().callEvent(new GameStartEvent(this));
@@ -102,14 +118,8 @@ public abstract class AbstractGame implements IGame{
     }
 
     @Override
-    public void addState(IState state){
-        if (state == null) throw new IllegalArgumentException("State cannot be null.");
-        if(statesLocked) throw new IllegalStateException("Cannot add state after game has started.");
-        stateQueue.offer(state);
-    }
-
-    @Override
-    public void disable(){
+    public void disable() {
+        assertMainThread();
         gameContext.getEventRouter().clearAll();
         plugin.getServer().getPluginManager().callEvent(new GameFinishEvent(this));
         if(this.currentState !=null) currentState.disable();
@@ -118,6 +128,13 @@ public abstract class AbstractGame implements IGame{
         onDisable();
     }
 
+    @Override
+    public void addState(IState state) {
+        assertMainThread();
+        if (state == null) throw new IllegalArgumentException("State cannot be null.");
+        if(statesLocked) throw new IllegalStateException("Cannot add state after game has started.");
+        stateQueue.offer(state);
+    }
 
     protected void tick(){
     	plugin.getServer().getPluginManager().callEvent(new GameTickEvent(this));
@@ -128,3 +145,5 @@ public abstract class AbstractGame implements IGame{
         onTick();
     }
 }
+
+

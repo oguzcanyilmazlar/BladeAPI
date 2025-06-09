@@ -20,7 +20,6 @@ public class GameContext {
     private static final Logger LOGGER = Logger.getLogger("BladeAPI-GameContext");
 
 
-    @Getter
     private final IGame game;
     private final Map<Class<? extends IGameData>, IGameData> gameDataMap = new HashMap<>();
     private final GameEventRouter eventRouter;
@@ -31,6 +30,10 @@ public class GameContext {
         this.plugin = plugin;
         this.game = game;
         this.eventRouter = new GameEventRouter(plugin, this);
+    }
+
+    public IGame getGame() {
+        return game;
     }
 
     public GameEventRouter getEventRouter() {

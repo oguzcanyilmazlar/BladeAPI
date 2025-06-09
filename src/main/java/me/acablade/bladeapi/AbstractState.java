@@ -8,17 +8,21 @@ import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public abstract class AbstractState implements IState {
 
     private final List<Runnable> endCallbacks = new ArrayList<>();
-
-    @Getter
     private final IGame game;
 
     @Getter
     private Instant startInstant = Instant.now();
 
+    public AbstractState(IGame game) {
+        this.game = game;
+    }
+
+    public IGame getGame() {
+        return game;
+    }
 
     public void resetTimer(){
         this.startInstant = Instant.now();

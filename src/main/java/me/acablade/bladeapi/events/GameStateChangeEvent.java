@@ -11,9 +11,7 @@ public class GameStateChangeEvent extends GameEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    @Getter
     private final IState prevPhase;
-    @Getter
     @Setter
     private IState nextPhase;
 
@@ -42,5 +40,13 @@ public class GameStateChangeEvent extends GameEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
+    }
+
+    public IState getNextPhase() {
+        return nextPhase;
+    }
+
+    public IState getPrevPhase() {
+        return prevPhase;
     }
 }

@@ -8,6 +8,9 @@ public abstract class GameEvent extends Event {
     protected final IGame game;
 
     public GameEvent(IGame abstractGame){
+        if (abstractGame == null) {
+            throw new IllegalArgumentException("IGame instance cannot be null");
+        }
         this.game = abstractGame;
     }
 
