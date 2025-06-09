@@ -1,27 +1,17 @@
 package me.acablade.bladeapi;
 
-import org.bukkit.event.Listener;
 
-import me.acablade.bladeapi.objects.IGameData;
+public interface IGame {
 
-public interface IGame extends Listener {
+    void onEnable();
+    void onDisable();
+    void onTick();
 
-    public void onEnable();
-    public void onDisable();
-    public void onTick();
+    IState getCurrentState();
 
-    public void enable(long delay, long period);
-    public void disable();
+    void enable(long delay, long period);
+    void disable();
 
-
-    public IGameData getGameData();
-
-
-    public void addPhaseNext(IState phase);
-    public void removeNextPhase();
-    public void addPhase(IState phase);
-    public void removeLastPhase();
-
-
+    void addState(IState state);
 
 }

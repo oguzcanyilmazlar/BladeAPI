@@ -7,17 +7,20 @@ import org.bukkit.event.Listener;
 
 public interface IState extends Listener {
 
-    public void onEnable();
-    public void onDisable();
-    public void onTick();
+    void onEnable();
+    void onDisable();
+    void onTick();
 
 
-    public void enable();
-    public void disable();
-    public void tick();
+    void enable();
+    void disable();
+    void tick();
 
 
-    public Duration timeLeft();
-    public Duration duration();
+    Duration timeLeft();
+    Duration duration();
+
+    default void onEnd(Runnable runnable) {}
+
 
 }

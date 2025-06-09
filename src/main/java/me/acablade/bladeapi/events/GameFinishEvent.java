@@ -4,10 +4,6 @@ import me.acablade.bladeapi.AbstractGame;
 import me.acablade.bladeapi.IGame;
 import org.bukkit.event.HandlerList;
 
-/**
- * @author Acablade/oz
- * Gets fired when the game is finished.
- */
 public class GameFinishEvent extends GameEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();

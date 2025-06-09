@@ -2,16 +2,16 @@ package me.acablade.bladeapi;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-/**
- * @author Acablade/oz
- */
-
 @RequiredArgsConstructor
 public abstract class AbstractState implements IState {
+
+    private final List<Runnable> endCallbacks = new ArrayList<>();
 
     @Getter
     private final IGame game;
@@ -30,7 +30,16 @@ public abstract class AbstractState implements IState {
         onEnable();
     }
 
+
+    @Override
+    public void onEnd(Runnable runnable) {
+        endCallbacks.add(runnable);
+    }
+
+
     public void disable(){
+        for (Runnable r : endCallbacks) r.run();
+        endCallbacks.clear();
         onDisable();
     }
 

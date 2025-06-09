@@ -1,14 +1,14 @@
-package me.acablade.bladeapi.events;
+package me.acablade.bladeapi.events.player;
 
 import me.acablade.bladeapi.IGame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-public class PlayerLeaveGameEvent extends GamePlayerEvent {
+public class PlayerJoinGameEvent extends GamePlayerEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public PlayerLeaveGameEvent(Player who, IGame game) {
+    public PlayerJoinGameEvent(Player who, IGame game) {
         super(who,game);
     }
 
@@ -20,7 +20,5 @@ public class PlayerLeaveGameEvent extends GamePlayerEvent {
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
-
-
 
 }

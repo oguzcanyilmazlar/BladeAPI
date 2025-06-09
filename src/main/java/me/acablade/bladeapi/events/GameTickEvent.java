@@ -10,7 +10,6 @@ public class GameTickEvent extends GameEvent{
 
 	public GameTickEvent(IGame abstractGame) {
 		super(abstractGame);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

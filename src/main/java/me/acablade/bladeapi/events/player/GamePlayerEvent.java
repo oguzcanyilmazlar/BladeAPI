@@ -1,9 +1,10 @@
-package me.acablade.bladeapi.events;
+package me.acablade.bladeapi.events.player;
 
 import me.acablade.bladeapi.IGame;
+import me.acablade.bladeapi.events.GameEvent;
 import org.bukkit.entity.Player;
 
-public abstract class GamePlayerEvent extends GameEvent{
+public abstract class GamePlayerEvent extends GameEvent {
 
     protected final Player player;
 

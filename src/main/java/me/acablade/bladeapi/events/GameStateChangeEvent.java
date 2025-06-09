@@ -1,6 +1,7 @@
 package me.acablade.bladeapi.events;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.acablade.bladeapi.IGame;
 import me.acablade.bladeapi.IState;
 import org.bukkit.event.Cancellable;
@@ -13,7 +14,8 @@ public class GameStateChangeEvent extends GameEvent implements Cancellable {
     @Getter
     private final IState prevPhase;
     @Getter
-    private final IState nextPhase;
+    @Setter
+    private IState nextPhase;
 
     private boolean cancelled;
 
