@@ -23,11 +23,73 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 public class GameEventRouter {
 
     private static final Logger LOGGER = Logger.getLogger("BladeAPI-GameEventRouter");
+
+    private static final Map<Class<? extends Event>, Function<Event, Set<UUID>>> PLAYER_EXTRACTORS = new LinkedHashMap<>();
+
+    static {
+        registerExtractor(PlayerEvent.class, event ->
+                Set.of((event).getPlayer().getUniqueId()));
+
+        registerExtractor(InventoryInteractEvent.class, event ->
+                Set.of((event).getWhoClicked().getUniqueId()));
+
+        registerExtractor(BlockBreakEvent.class, event ->
+                Set.of(( event).getPlayer().getUniqueId()));
+
+        registerExtractor(BlockPlaceEvent.class, event ->
+                Set.of((event).getPlayer().getUniqueId()));
+
+        registerExtractor(PlayerInteractEntityEvent.class, event -> {
+            Set<UUID> ids = new HashSet<>();
+            ids.add(event.getPlayer().getUniqueId());
+            if (event.getRightClicked() instanceof Player p) {
+                ids.add(p.getUniqueId());
+            }
+            return ids;
+        });
+
+        registerExtractor(EntityDamageByEntityEvent.class, event -> {
+            Set<UUID> ids = new HashSet<>();
+
+
+            if (event.getEntity() instanceof Player damaged)
+                ids.add(damaged.getUniqueId());
+
+            Entity damager = event.getDamager();
+            switch (damager) {
+                case Player p -> ids.add(p.getUniqueId());
+                case Projectile projectile -> {
+                    if (projectile.getShooter() instanceof Player shooter) {
+                        ids.add(shooter.getUniqueId());
+                    }
+                }
+                case TNTPrimed tnt -> {
+                    if (tnt.getSource() instanceof Player source) {
+                        ids.add(source.getUniqueId());
+                    }
+                }
+                default -> {
+                }
+            }
+
+            return ids;
+        });
+
+        registerExtractor(EntityEvent.class, event -> {
+            Entity entity = event.getEntity();
+            return (entity instanceof Player p) ? Set.of(p.getUniqueId()) : Set.of();
+        });
+    }
+
+    public static <T extends Event> void registerExtractor(Class<T> clazz, Function<T, Set<UUID>> extractor) {
+        PLAYER_EXTRACTORS.putIfAbsent(clazz, (Function<Event, Set<UUID>>) extractor);
+    }
 
 
     private final GameContext context;
@@ -105,53 +167,21 @@ public class GameEventRouter {
     }
 
     private Set<UUID> extractPlayersFromEvent(Event event) {
-        Set<UUID> players = new HashSet<>();
-
-        try {
-            switch (event) {
-
-                case InventoryInteractEvent inventoryInteractEvent ->
-                        players.add(inventoryInteractEvent.getWhoClicked().getUniqueId());
-                case BlockBreakEvent blockBreakEvent -> players.add(blockBreakEvent.getPlayer().getUniqueId());
-                case BlockPlaceEvent blockPlaceEvent -> players.add(blockPlaceEvent.getPlayer().getUniqueId());
-                case EntityDamageByEntityEvent damageEvent -> {
-                    if (damageEvent.getEntity() instanceof Player damaged) {
-                        players.add(damaged.getUniqueId());
-                    }
-                    Entity damager = damageEvent.getDamager();
-                    if (damager instanceof Player playerDamager) {
-                        players.add(playerDamager.getUniqueId());
-                    } else if (damager instanceof Projectile projectile) {
-                        if (projectile.getShooter() instanceof Player shooter) {
-                            players.add(shooter.getUniqueId());
-                        }
-                    } else if (damager instanceof TNTPrimed tnt) {
-                        if (tnt.getSource() instanceof Player sourcePlayer) {
-                            players.add(sourcePlayer.getUniqueId());
-                        }
-                    }
+        for (Map.Entry<Class<? extends Event>, Function<Event, Set<UUID>>> entry : PLAYER_EXTRACTORS.entrySet()) {
+            if (entry.getKey().isAssignableFrom(event.getClass())) {
+                try {
+                    return entry.getValue().apply(event);
+                } catch (Exception e) {
+                    LOGGER.severe("Error extracting players from event: " + event.getClass().getSimpleName());
+                    e.printStackTrace();
                 }
-                case PlayerInteractEntityEvent interactEvent -> {
-                    players.add(interactEvent.getPlayer().getUniqueId());
-                    if (interactEvent.getRightClicked() instanceof Player clickedPlayer) {
-                        players.add(clickedPlayer.getUniqueId());
-                    }
-                }
-                case PlayerEvent playerEvent -> players.add(playerEvent.getPlayer().getUniqueId());
-                case EntityEvent entityEvent -> {
-                    Entity entity = entityEvent.getEntity();
-                    if (entity instanceof Player) {
-                        players.add(entity.getUniqueId());
-                    }
-                }
-                case null, default -> LOGGER.warning("Unhandled event type: " + event.getClass().getName());
             }
-        } catch (Exception ignored) {
-            LOGGER.severe("something went very wrong.");
         }
 
-        return players;
+        LOGGER.warning("No extractor found for event: " + event.getClass().getName());
+        return Collections.emptySet();
     }
+
 
     public void clearAll() {
         for (List<RegisteredHandler<? extends Event>> handlerList : handlers.values()) {
