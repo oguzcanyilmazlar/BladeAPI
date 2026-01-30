@@ -167,6 +167,16 @@ public class GameEventRouter {
     }
 
     private Set<UUID> extractPlayersFromEvent(Event event) {
+
+        if(PLAYER_EXTRACTORS.containsKey(event.getClass())){
+            try {
+                return PLAYER_EXTRACTORS.get(event.getClass()).apply(event);
+            } catch (Exception e) {
+                LOGGER.severe("Error extracting players from event: " + event.getClass().getSimpleName());
+                e.printStackTrace();
+            }
+        }
+
         for (Map.Entry<Class<? extends Event>, Function<Event, Set<UUID>>> entry : PLAYER_EXTRACTORS.entrySet()) {
             if (event.getClass().isAssignableFrom(entry.getKey())) {
                 try {
@@ -178,7 +188,6 @@ public class GameEventRouter {
             }
         }
 
-        LOGGER.warning("No extractor found for event: " + event.getClass().getName());
         return Collections.emptySet();
     }
 
