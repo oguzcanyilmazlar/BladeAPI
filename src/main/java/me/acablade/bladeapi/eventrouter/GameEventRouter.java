@@ -168,7 +168,7 @@ public class GameEventRouter {
 
     private Set<UUID> extractPlayersFromEvent(Event event) {
         for (Map.Entry<Class<? extends Event>, Function<Event, Set<UUID>>> entry : PLAYER_EXTRACTORS.entrySet()) {
-            if (entry.getKey().isAssignableFrom(event.getClass())) {
+            if (event.getClass().isAssignableFrom(entry.getKey())) {
                 try {
                     return entry.getValue().apply(event);
                 } catch (Exception e) {
