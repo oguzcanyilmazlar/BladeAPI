@@ -123,6 +123,9 @@ public class GameEventRouter {
 
     private <T extends Event> void registerWithBukkit(Class<T> eventClass, EventPriority priority, boolean ignoreCancelled) {
         Bukkit.getPluginManager().registerEvent(eventClass, new Listener() {}, priority, (listener, event) -> {
+            // Add type check here - only process if event is actually an instance of the registered class
+            if (!eventClass.isInstance(event)) return;
+
             //noinspection unchecked
             T evt = (T) event;
             if (!isRelevantEvent(evt)) return;
